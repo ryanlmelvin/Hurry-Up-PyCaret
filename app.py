@@ -93,10 +93,7 @@ if 'df' in locals():
             if submit_button:
                 # Update the PyCaret setup configuration based on the form inputs
                 for param, value in setup_params.items():
-                    if isinstance(setup_params[param], bool):
-                        # For boolean parameters, convert the string to a boolean value
-                        form_inputs[param] = value.lower() == "true"
-                    elif isinstance(setup_params[param], float):
+                    if isinstance(setup_params[param], float):
                         # For numeric parameters, convert the string to a numeric value
                         form_inputs[param] = float(value)
                     elif isinstance(setup_params[param], int):
