@@ -40,7 +40,8 @@ if 'df' in locals():
             for param in params:
                 default_value = clf_setup[1].get(param)
                 default_value = str(default_value) if default_value is not None else "None"
-                form_inputs[param] = st.text_input(param, default_value)
+                text_input = st.text_input(param, default_value, key=param)
+                form_inputs[param] = text_input
 
             # Add a button to submit the form
             submit_button = st.form_submit_button(label="Compare Models")
