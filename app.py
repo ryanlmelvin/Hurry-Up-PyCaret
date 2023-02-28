@@ -44,7 +44,7 @@ if 'df' in locals():
                     clf_setup[1][param] = new_value
 
             # Add a button to submit the form
-            submit_button = st.form_submit_button(label="Compare Models")
+    submit_button = st.form_submit_button(label="Compare Models")
 
             if submit_button:
                 # Train and compare models using PyCaret
