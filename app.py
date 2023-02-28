@@ -46,8 +46,8 @@ if 'df' in locals():
             # Add a button to submit the form
             submit_button = st.form_submit_button(label="Compare Models")
 
-        if submit_button:
-            # Train and compare models using PyCaret
-            best_model = compare_models()
-            st.write("### Best Model")
-            st.write(best_model)
+            if submit_button:
+                # Train and compare models using PyCaret
+                best_model = compare_models()
+                st.write("### Best Model")
+                st.write(best_model)
