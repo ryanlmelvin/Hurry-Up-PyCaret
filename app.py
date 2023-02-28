@@ -37,7 +37,6 @@ if 'df' in locals():
             "pca": False,
             "pca_method": "linear",
             "pca_components": None,
-            "pca_iter": 100,
             "ignore_low_variance": False,
             "combine_rare_levels": False,
             "rare_level_threshold": 0.1,
