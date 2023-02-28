@@ -2,17 +2,19 @@ import streamlit as st
 import pandas as pd
 from pycaret.classification import *
 
+st.title("Hurry Up Pycaret")
+
 intro_text = """
 On average, data scientists spend upwards of 50,000 hours setting up their models with PyCaret over the course of their careers.<br><br>
 When I heard that, I thought to myself, "Why on earth don't these guys just hurry up?"<br><br>
-So that's just what we did. Introducing the PyCaret Setup Accelerator, the fastest way to set up and compare classification models.<br><br>
-With PyCaret, you can classify your data in a fraction of the time it takes to wait for your shrimp to arrive.<br><br>
-So hurry up and try the PyCaret Setup Accelerator today, and get back to doing the things you love, like sipping margaritas on the beach or binge-watching your favorite TV show!
+So that's just what we did. Introducing Hurry Up PyCaret, the fastest way to set up and compare classification models.<br><br>
+With Hurry Up PyCaret, you can classify your data in a fraction of the time it takes to actually set up PyCaret.<br><br>
+So hurry up and try Hurry Up PyCaret today, and get back to doing the things you love, like sipping margaritas on the beach or binge-watching your favorite TV show!
 """
 
 st.markdown(intro_text, unsafe_allow_html=True)
 
-st.title("PyCaret Classification App")
+
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
