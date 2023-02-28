@@ -76,23 +76,40 @@ if 'df' in locals():
             st.write("### PyCaret Setup Parameters")
             form_inputs = {}
             for param, value in setup_params.items():
-                value = str(value) if value is not None else "None"
-                form_inputs[param] = st.text_input(param, value, key=param)
+                if isinstance(value, bool):
+                    # For boolean parameters, show a checkbox widget
+                    new_value = st.checkbox(param, value=value, key=param)
+                elif isinstance(value, (int, float)):
+                    # For numeric parameters, show a number input widget
+                    new_value = st.number_input(param, value=value, key=param)
+                else:
+                    # For all other parameters, show a text input widget
+                    new_value = st.text_input(param, str(value), key=param)
+                form_inputs[param] = new_value
 
             # Add a button to submit the form
             submit_button = st.form_submit_button(label="Compare Models")
 
             if submit_button:
                 # Update the PyCaret setup configuration based on the form inputs
-                for param, value in form_inputs.items():
-                    if value != "None":
-                        setup_params[param] = value
+                for param, value in setup_params.items():
+                    if isinstance(setup_params[param], bool):
+                        # For boolean parameters, convert the string to a boolean value
+                        form_inputs[param] = value.lower() == "true"
+                    elif isinstance(setup_params[param], float):
+                        # For numeric parameters, convert the string to a numeric value
+                        form_inputs[param] = float(value)
+                    elif isinstance(setup_params[param], int):
+                        form_inputs[param] = int(value)
+                    else:
+                        # For all other parameters, use the string value
+                        form_inputs[param] = value
 
                 # Set up the PyCaret classification task using the updated parameters
                 clf_setup = setup(
                     data=df,
                     target=target_column,
-                    **setup_params,
+                    **form_inputs,
                 )
 
                 # Train and compare models using PyCaret
@@ -100,3 +117,4 @@ if 'df' in locals():
                 st.write("### Best Model")
                 st.write(best_model)
 
+           
