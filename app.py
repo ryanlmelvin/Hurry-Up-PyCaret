@@ -116,7 +116,8 @@ if 'df' in locals():
 
                 # Train and compare models using PyCaret
                 best_model = compare_models()
+                results = pull()
                 st.write("### Best Model")
-                st.write(best_model)
+                st.write(results)
 
            
