@@ -22,12 +22,13 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
 if 'df' in locals():
-    target_column = st.selectbox("Select target column", df.columns)
-    submit_button1 = st.form_submit_button(label="Select")
+    with st.form(key="form1"):
+        target_column = st.selectbox("Select target column", df.columns)
+        submit_button1 = st.form_submit_button(label="Select")
     
     if submit_button1:
         if target_column is not None:
-            with st.form(key="form"):
+            with st.form(key="form2"):
                 # Set up the PyCaret classification task
                 clf_setup = setup(
                     data=df,
