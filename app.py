@@ -16,7 +16,7 @@ st.markdown(intro_text, unsafe_allow_html=True)
 
 
 
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader("Choose a CSV")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
