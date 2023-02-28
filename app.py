@@ -35,70 +35,21 @@ if 'df' in locals():
 
             # Show all available parameters in a form
             st.write("### PyCaret Setup Parameters")
-            param_defaults = {
-                "numeric_features": None,
-                "categorical_features": None,
-                "date_features": None,
-                "ignore_features": None,
-                "normalize": False,
-                "normalize_method": "zscore",
-                "transformation": False,
-                "transformation_method": "yeo-johnson",
-                "handle_unknown_categorical": True,
-                "unknown_categorical_method": "least_frequent",
-                "pca": False,
-                "pca_method": "linear",
-                "pca_components": None,
-                "pca_iter": 100,
-                "ignore_low_variance": False,
-                "combine_rare_levels": False,
-                "rare_level_threshold": 0.1,
-                "bin_numeric_features": None,
-                "remove_outliers": False,
-                "outliers_threshold": 0.05,
-                "remove_multicollinearity": False,
-                "multicollinearity_threshold": 0.9,
-                "create_clusters": False,
-                "cluster_iter": 20,
-                "polynomial_features": False,
-                "polynomial_degree": 2,
-                "trigonometry_features": False,
-                "polynomial_threshold": 0.1,
-                "group_features": None,
-                "group_names": None,
-                "feature_selection": False,
-                "feature_selection_threshold": 0.8,
-                "feature_interaction": False,
-                "feature_ratio": False,
-                "interaction_threshold": 0.01,
-                "fix_imbalance": False,
-                "fix_imbalance_method": None,
-                "data_split_shuffle": True,
-                "data_split_stratify": False,
-                "fold_strategy": "stratifiedkfold",
-                "fold": 10,
-                "fold_shuffle": False,
-                "fold_groups": None,
-                "n_jobs": -1,
-                "use_gpu": False,
-                "gpu_id": 0,
-                "silent": True,
-            }
             form_inputs = {}
-            for param, default_value in param_defaults.items():
-                value = clf_setup[1].get(param, default_value)
-                value = str(value) if value is not None else "None"
-                new_value = st.text_input(param, value)
-                form_inputs[param] = new_value
+            params = get_config("prep_pipe")
+            for param in params:
+                default_value = clf_setup[1].get(param)
+                default_value = str(default_value) if default_value is not None else "None"
+                form_inputs[param] = st.text_input(param, default_value)
 
             # Add a button to submit the form
             submit_button = st.form_submit_button(label="Compare Models")
 
             if submit_button:
                 # Update the PyCaret setup configuration based on the form inputs
-                for param, value in form_inputs.items():
-                    if value != "None":
-                        clf_setup[1][param] = value
+                for param, text_input in form_inputs.items():
+                    if text_input != "None":
+                        clf_setup[1][param] = text_input
 
                 # Train and compare models using PyCaret
                 best_model = compare_models()
