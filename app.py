@@ -68,7 +68,6 @@ if 'df' in locals():
             "fold_groups": None,
             "n_jobs": -1,
             "use_gpu": False,
-            "gpu_id": None,
             "silent": True,
         }
 
