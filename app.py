@@ -33,7 +33,7 @@ if 'df' in locals():
             "transformation": False,
             "transformation_method": "yeo-johnson",
             "handle_unknown_categorical": True,
-            "unknown_categorical_method             ": "least_frequent",
+            "unknown_categorical_method": "least_frequent",
             "pca": False,
             "pca_method": "linear",
             "pca_components": None,
