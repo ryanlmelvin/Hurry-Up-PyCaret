@@ -32,13 +32,14 @@ if 'df' in locals():
                 target=target_column,
                 silent=True,  # Disable PyCaret output
             )
+            clf_setup_dict = eval(clf_setup)
 
             # Show all available parameters in a form
             st.write("### PyCaret Setup Parameters")
             form_inputs = {}
             params = get_config("prep_pipe")
             for param in params:
-                default_value = clf_setup[1].get(param)
+                default_value = clf_setup_dict["prep_pipe"][0][param]
                 default_value = str(default_value) if default_value is not None else "None"
                 text_input = st.text_input(param, default_value, key=param)
                 form_inputs[param] = text_input
@@ -50,7 +51,8 @@ if 'df' in locals():
                 # Update the PyCaret setup configuration based on the form inputs
                 for param, text_input in form_inputs.items():
                     if text_input != "None":
-                        clf_setup[1][param] = text_input
+                        clf_setup_dict["prep_pipe"][0][param] = text_input
+                clf_setup_str = str(clf_setup_dict)
 
                 # Train and compare models using PyCaret
                 best_model = compare_models()
