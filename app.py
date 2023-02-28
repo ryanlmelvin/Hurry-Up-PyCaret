@@ -49,3 +49,6 @@ if target_column is not None:
 
     if submit_button:
         # Train and compare models using PyCaret
+        best_model = compare_models()
+        st.write("### Best Model")
+        st.write(best_model)
