@@ -23,31 +23,33 @@ if uploaded_file is not None:
 
 if 'df' in locals():
     target_column = st.selectbox("Select target column", df.columns)
+    submit_button1 = st.form_submit_button(label="Select")
+    
+    if submit_button1:
+        if target_column is not None:
+            with st.form(key="form"):
+                # Set up the PyCaret classification task
+                clf_setup = setup(
+                    data=df,
+                    target=target_column,
+                    silent=True,  # Disable PyCaret output
+                )
 
-    if target_column is not None:
-        with st.form(key="form"):
-            # Set up the PyCaret classification task
-            clf_setup = setup(
-                data=df,
-                target=target_column,
-                silent=True,  # Disable PyCaret output
-            )
+                # Show all available parameters
+                st.write("### PyCaret Setup Parameters")
+                params = get_config("prep_pipe")
+                for param in params:
+                    value = clf_setup[1].get(param)
+                    value = str(value) if value is not None else "None"
+                    new_value = st.text_input(f"{param} ({value})")
+                    if new_value != "None":
+                        clf_setup[1][param] = new_value
 
-            # Show all available parameters
-            st.write("### PyCaret Setup Parameters")
-            params = get_config("prep_pipe")
-            for param in params:
-                value = clf_setup[1].get(param)
-                value = str(value) if value is not None else "None"
-                new_value = st.text_input(f"{param} ({value})")
-                if new_value != "None":
-                    clf_setup[1][param] = new_value
+                # Add a button to submit the form
+                submit_button2 = st.form_submit_button(label="Compare Models")
 
-            # Add a button to submit the form
-            submit_button = st.form_submit_button(label="Compare Models")
-
-        if submit_button:
-            # Train and compare models using PyCaret
-            best_model = compare_models()
-            st.write("### Best Model")
-            st.write(best_model)
+            if submit_button2:
+                # Train and compare models using PyCaret
+                best_model = compare_models()
+                st.write("### Best Model")
+                st.write(best_model)
