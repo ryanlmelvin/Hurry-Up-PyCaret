@@ -14,8 +14,6 @@ So hurry up and try Hurry Up PyCaret today, and get back to doing the things you
 
 st.markdown(intro_text, unsafe_allow_html=True)
 
-
-
 uploaded_file = st.file_uploader("Choose a CSV")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
@@ -31,13 +29,13 @@ if 'df' in locals():
             "date_features": None,
             "ignore_features": None,
             "normalize": True,
-            "normalize_method": "zscore",
+            "normalize_method": ["zscore", "minmax", "maxabs", "robust"],
             "transformation": False,
-            "transformation_method": "yeo-johnson",
+            "transformation_method": ["yeo-johnson", "quantile", "yeo-johnson", None],
             "handle_unknown_categorical": True,
-            "unknown_categorical_method": "least_frequent",
+            "unknown_categorical_method": ["least_frequent", "most_frequent"],
             "pca": False,
-            "pca_method": "linear",
+            "pca_method": ["linear", "kernel"],
             "pca_components": None,
             "ignore_low_variance": False,
             "combine_rare_levels": False,
@@ -64,7 +62,7 @@ if 'df' in locals():
             "fix_imbalance_method": None,
             "data_split_shuffle": True,
             "data_split_stratify": False,
-            "fold_strategy": "kfold",
+            "fold_strategy": ["kfold", "stratifiedkfold", "timeseries"],
             "fold": 10,
             "fold_shuffle": False,
             "fold_groups": None,
@@ -73,51 +71,53 @@ if 'df' in locals():
             "silent": True,
         }
 
-        with st.form(key="form"):
-            # Show all available parameters in a form
-            st.write("### PyCaret Setup Parameters")
-            form_inputs = {}
+      with st.form(key="form"):
+        # Show all available parameters in a form
+        st.write("### PyCaret Setup Parameters")
+        form_inputs = {}
+        for param, value in setup_params.items():
+            if isinstance(value, bool):
+                # For boolean parameters, show a checkbox widget
+                new_value = st.checkbox(param, value=value, key=param)
+            elif isinstance(value, (int, float)):
+                # For numeric parameters, show a number input widget
+                new_value = st.number_input(param, value=value, key=param)
+            elif isinstance(value, list):
+                # For enumerable options, show a dropdown menu
+                new_value = st.selectbox(param, value, key=param)
+            else:
+                # For all other parameters, show a text input widget
+                new_value = st.text_input(param, str(value), key=param)
+            form_inputs[param] = new_value
+
+        # Add a button to submit the form
+        submit_button = st.form_submit_button(label="Compare Models")
+
+        if submit_button:
+            # Update the PyCaret setup configuration based on the form inputs
             for param, value in setup_params.items():
-                if isinstance(value, bool):
-                    # For boolean parameters, show a checkbox widget
-                    new_value = st.checkbox(param, value=value, key=param)
-                elif isinstance(value, (int, float)):
-                    # For numeric parameters, show a number input widget
-                    new_value = st.number_input(param, value=value, key=param)
+                if isinstance(setup_params[param], bool):
+                    # For boolean parameters, convert the string to a boolean value
+                    form_inputs[param] = str(form_inputs[param]).lower() == "true"
+                elif isinstance(setup_params[param], float):
+                    # For numeric parameters, convert the string to a float value
+                    form_inputs[param] = float(form_inputs[param])
+                elif isinstance(setup_params[param], int):
+                    # For numeric parameters, convert the string to an integer value
+                    form_inputs[param] = int(form_inputs[param])
                 else:
-                    # For all other parameters, show a text input widget
-                    new_value = st.text_input(param, str(value), key=param)
-                form_inputs[param] = new_value
+                    # For all other parameters, use the string value
+                    form_inputs[param] = form_inputs[param]
 
-            # Add a button to submit the form
-            submit_button = st.form_submit_button(label="Compare Models")
+            # Set up the PyCaret classification task using the updated parameters
+            clf_setup = setup(
+                data=df,
+                target=target_column,
+                **form_inputs,
+            )
 
-            if submit_button:
-                # Update the PyCaret setup configuration based on the form inputs
-                for param, value in setup_params.items():
-                    if isinstance(setup_params[param], bool):
-                        # For boolean parameters, convert the string to a boolean value
-                        form_inputs[param] = str(value).lower() == "true"
-                    elif isinstance(setup_params[param], float):
-                        # For numeric parameters, convert the string to a numeric value
-                        form_inputs[param] = float(value)
-                    elif isinstance(setup_params[param], int):
-                        form_inputs[param] = int(value)
-                    else:
-                        # For all other parameters, use the string value
-                        form_inputs[param] = value
-
-                # Set up the PyCaret classification task using the updated parameters
-                clf_setup = setup(
-                    data=df,
-                    target=target_column,
-                    **form_inputs,
-                )
-
-                # Train and compare models using PyCaret
-                best_model = compare_models()
-                results = pull()
-                st.write("### Best Model")
-                st.write(results)
-
-           
+            # Train and compare models using PyCaret
+            best_model = compare_models()
+            results = pull()
+            st.write("### Best Model")
+            st.write(results)
