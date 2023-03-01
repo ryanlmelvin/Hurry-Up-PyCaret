@@ -135,21 +135,17 @@ if 'df' in locals():
 
                 # Generate Python code to recreate the model comparison
                 st.write("### Python Code to Recreate the Model Comparison")
-                code = f"""
-                    from pycaret.classification import *
 
-                    # Load the data
-                    df = pd.read_csv('{uploaded_file.name}')
+                code = (
+                    "from pycaret.classification import *\n\n"
+                    f"df = pd.read_csv('{uploaded_file.name}')\n\n"
+                    f"clf_setup = setup(\n"
+                    f"    data=df,\n"
+                    f"    target='{target_column}',\n"
+                    f"    {''.join([f'{k}={v!r},' for k, v in form_inputs.items()])}\n"
+                    f")\n\n"
+                    "best_model = compare_models()\n"
+                )
 
-                    # Set up PyCaret classification task
-                    clf_setup = setup(
-                        data=df,
-                        target='{target_column}',
-                        {'\n, '.join([f'{k}={v!r}' for k, v in form_inputs.items()])},
-                    )
-
-                    # Train and compare models
-                    best_model = compare_models()
-                    """
                 st.code(code, language="python")
 
