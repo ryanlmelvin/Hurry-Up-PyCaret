@@ -120,12 +120,6 @@ if 'df' in locals():
                     target=target_column,
                     **form_inputs,
                 )
-
-                # Train and compare models using PyCaret
-                best_model = compare_models()
-                results = pull()
-                st.write("### Best Model")
-                st.write(results)
                 
                 # Train and compare models using PyCaret
                 best_model = compare_models()
