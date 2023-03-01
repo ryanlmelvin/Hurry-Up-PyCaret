@@ -29,13 +29,13 @@ if 'df' in locals():
             "date_features": None,
             "ignore_features": None,
             "normalize": True,
-            "normalize_method": ["zscore", "minmax", "maxabs", "robust"],
+            "normalize_method": "zscore",
             "transformation": False,
-            "transformation_method": ["yeo-johnson", "quantile", "yeo-johnson", None],
+            "transformation_method": "yeo-johnson",
             "handle_unknown_categorical": True,
-            "unknown_categorical_method": ["least_frequent", "most_frequent"],
+            "unknown_categorical_method": "least_frequent",
             "pca": False,
-            "pca_method": ["linear", "kernel"],
+            "pca_method": "linear",
             "pca_components": None,
             "ignore_low_variance": False,
             "combine_rare_levels": False,
@@ -62,7 +62,7 @@ if 'df' in locals():
             "fix_imbalance_method": None,
             "data_split_shuffle": True,
             "data_split_stratify": False,
-            "fold_strategy": ["kfold", "stratifiedkfold", "timeseries"],
+            "fold_strategy": "kfold",
             "fold": 10,
             "fold_shuffle": False,
             "fold_groups": None,
@@ -70,6 +70,7 @@ if 'df' in locals():
             "use_gpu": False,
             "silent": True,
         }
+
         with st.form(key="form"):
             # Show all available parameters in a form
             st.write("### PyCaret Setup Parameters")
@@ -81,9 +82,12 @@ if 'df' in locals():
                 elif isinstance(value, (int, float)):
                     # For numeric parameters, show a number input widget
                     new_value = st.number_input(param, value=value, key=param)
-                elif isinstance(value, list):
-                    # For enumerable options, show a dropdown menu
-                    new_value = st.selectbox(param, value, key=param)
+                elif param in ["numeric_features", "categorical_features", "date_features"]:
+                    # For feature selection parameters, show a multiselect widget
+                    options = [col for col in df.columns if col != target_column]
+                    default_value = None if value is None else value.split(",")
+                    new_value = st.multiselect(param, options=options, default=default_value, key=param)
+                    new_value = ",".join(new_value) if new_value else None
                 else:
                     # For all other parameters, show a text input widget
                     new_value = st.text_input(param, str(value), key=param)
@@ -97,16 +101,18 @@ if 'df' in locals():
                 for param, value in setup_params.items():
                     if isinstance(setup_params[param], bool):
                         # For boolean parameters, convert the string to a boolean value
-                        form_inputs[param] = str(form_inputs[param]).lower() == "true"
+                        form_inputs[param] = str(value).lower() == "true"
                     elif isinstance(setup_params[param], float):
-                        # For numeric parameters, convert the string to a float value
-                        form_inputs[param] = float(form_inputs[param])
+                        # For numeric parameters, convert the string to a numeric value
+                        form_inputs[param] = float(value)
                     elif isinstance(setup_params[param], int):
-                        # For numeric parameters, convert the string to an integer value
-                        form_inputs[param] = int(form_inputs[param])
+                        form_inputs[param] = int(value)
+                    elif param in ["numeric_features", "categorical_features", "date_features"]:
+                        # For feature selection parameters, convert the string to a list of column names
+                        form_inputs[param] = value.split(",") if value else None
                     else:
                         # For all other parameters, use the string value
-                        form_inputs[param] = form_inputs[param]
+                        form_inputs[param] = value
 
                 # Set up the PyCaret classification task using the updated parameters
                 clf_setup = setup(
@@ -120,3 +126,4 @@ if 'df' in locals():
                 results = pull()
                 st.write("### Best Model")
                 st.write(results)
+
