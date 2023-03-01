@@ -70,54 +70,53 @@ if 'df' in locals():
             "use_gpu": False,
             "silent": True,
         }
-
-      with st.form(key="form"):
-        # Show all available parameters in a form
-        st.write("### PyCaret Setup Parameters")
-        form_inputs = {}
-        for param, value in setup_params.items():
-            if isinstance(value, bool):
-                # For boolean parameters, show a checkbox widget
-                new_value = st.checkbox(param, value=value, key=param)
-            elif isinstance(value, (int, float)):
-                # For numeric parameters, show a number input widget
-                new_value = st.number_input(param, value=value, key=param)
-            elif isinstance(value, list):
-                # For enumerable options, show a dropdown menu
-                new_value = st.selectbox(param, value, key=param)
-            else:
-                # For all other parameters, show a text input widget
-                new_value = st.text_input(param, str(value), key=param)
-            form_inputs[param] = new_value
-
-        # Add a button to submit the form
-        submit_button = st.form_submit_button(label="Compare Models")
-
-        if submit_button:
-            # Update the PyCaret setup configuration based on the form inputs
+        with st.form(key="form"):
+            # Show all available parameters in a form
+            st.write("### PyCaret Setup Parameters")
+            form_inputs = {}
             for param, value in setup_params.items():
-                if isinstance(setup_params[param], bool):
-                    # For boolean parameters, convert the string to a boolean value
-                    form_inputs[param] = str(form_inputs[param]).lower() == "true"
-                elif isinstance(setup_params[param], float):
-                    # For numeric parameters, convert the string to a float value
-                    form_inputs[param] = float(form_inputs[param])
-                elif isinstance(setup_params[param], int):
-                    # For numeric parameters, convert the string to an integer value
-                    form_inputs[param] = int(form_inputs[param])
+                if isinstance(value, bool):
+                    # For boolean parameters, show a checkbox widget
+                    new_value = st.checkbox(param, value=value, key=param)
+                elif isinstance(value, (int, float)):
+                    # For numeric parameters, show a number input widget
+                    new_value = st.number_input(param, value=value, key=param)
+                elif isinstance(value, list):
+                    # For enumerable options, show a dropdown menu
+                    new_value = st.selectbox(param, value, key=param)
                 else:
-                    # For all other parameters, use the string value
-                    form_inputs[param] = form_inputs[param]
+                    # For all other parameters, show a text input widget
+                    new_value = st.text_input(param, str(value), key=param)
+                form_inputs[param] = new_value
 
-            # Set up the PyCaret classification task using the updated parameters
-            clf_setup = setup(
-                data=df,
-                target=target_column,
-                **form_inputs,
-            )
+            # Add a button to submit the form
+            submit_button = st.form_submit_button(label="Compare Models")
 
-            # Train and compare models using PyCaret
-            best_model = compare_models()
-            results = pull()
-            st.write("### Best Model")
-            st.write(results)
+            if submit_button:
+                # Update the PyCaret setup configuration based on the form inputs
+                for param, value in setup_params.items():
+                    if isinstance(setup_params[param], bool):
+                        # For boolean parameters, convert the string to a boolean value
+                        form_inputs[param] = str(form_inputs[param]).lower() == "true"
+                    elif isinstance(setup_params[param], float):
+                        # For numeric parameters, convert the string to a float value
+                        form_inputs[param] = float(form_inputs[param])
+                    elif isinstance(setup_params[param], int):
+                        # For numeric parameters, convert the string to an integer value
+                        form_inputs[param] = int(form_inputs[param])
+                    else:
+                        # For all other parameters, use the string value
+                        form_inputs[param] = form_inputs[param]
+
+                # Set up the PyCaret classification task using the updated parameters
+                clf_setup = setup(
+                    data=df,
+                    target=target_column,
+                    **form_inputs,
+                )
+
+                # Train and compare models using PyCaret
+                best_model = compare_models()
+                results = pull()
+                st.write("### Best Model")
+                st.write(results)
