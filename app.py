@@ -127,7 +127,13 @@ if 'df' in locals():
                 st.write("### Best Model")
                 st.write(results)
                 
-                    # Generate Python code to recreate the model comparison
+                # Train and compare models using PyCaret
+                best_model = compare_models()
+                results = pull()
+                st.write("### Best Model")
+                st.write(results)
+
+                # Generate Python code to recreate the model comparison
                 st.write("### Python Code to Recreate the Model Comparison")
                 code = f"""
                     from pycaret.classification import *
@@ -139,12 +145,11 @@ if 'df' in locals():
                     clf_setup = setup(
                         data=df,
                         target='{target_column}',
-                    """
-                for param, value in form_inputs.items():
-                    code += f"    {param} = {value!r}\n"
-                code += "\n"
+                        {'\n, '.join([f'{k}={v!r}' for k, v in form_inputs.items()])},
+                    )
 
-                code += "    # Train and compare models\n"
-                code += "    best_model = compare_models()\n"
+                    # Train and compare models
+                    best_model = compare_models()
+                    """
                 st.code(code, language="python")
 
