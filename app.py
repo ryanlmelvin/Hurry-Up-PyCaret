@@ -135,17 +135,22 @@ if 'df' in locals():
 
                 # Generate Python code to recreate the model comparison
                 st.write("### Python Code to Recreate the Model Comparison")
+                code_lines = [
+                    "from pycaret.classification import *",
+                    "",
+                    f"df = pd.read_csv('{uploaded_file.name}')",
+                    "",
+                    "clf_setup = setup(",
+                    f"    data=df,",
+                    f"    target='{target_column}',",
+                ]
+                for param, value in form_inputs.items():
+                    code_lines.append(f"    {param}={value!r},")
 
-                code = (
-                    "from pycaret.classification import *\n\n"
-                    f"df = pd.read_csv('{uploaded_file.name}')\n\n"
-                    f"clf_setup = setup(\n"
-                    f"    data=df,\n"
-                    f"    target='{target_column}',\n"
-                    f"    {''.join([f'{k}={v!r},' for k, v in form_inputs.items()])}\n"
-                    f")\n\n"
-                    "best_model = compare_models()\n"
-                )
+                code_lines.append(")")
+                code_lines.append("")
+                code_lines.append("best_model = compare_models()")
 
+                code = "\n".join(code_lines)
                 st.code(code, language="python")
 
