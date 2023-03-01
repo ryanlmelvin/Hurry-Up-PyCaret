@@ -126,4 +126,24 @@ if 'df' in locals():
                 results = pull()
                 st.write("### Best Model")
                 st.write(results)
+                
+                # Generate Python code to recreate the model comparison
+                st.write("### Python Code to Recreate the Model Comparison")
+                code = f"""
+                    from pycaret.classification import *
+
+                    # Load the data
+                    df = pd.read_csv('{uploaded_file.name}')
+
+                    # Set up PyCaret classification task
+                    clf_setup = setup(
+                        data=df,
+                        target='{target_column}',
+                        {', '.join([f'{k}={v!r}' for k, v in form_inputs.items()])},
+                    )
+
+                    # Train and compare models
+                    best_model = compare_models()
+                    """
+                st.code(code, language="python")
 
