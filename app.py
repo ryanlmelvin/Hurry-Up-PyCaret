@@ -82,10 +82,6 @@ if 'df' in locals():
                 elif isinstance(value, (int, float)):
                     # For numeric parameters, show a number input widget
                     new_value = st.number_input(param, value=value, key=param)
-                elif param in ["normalize_method", "transformation_method", "unknown_categorical_method", "pca_method", "fix_imbalance_method", "fold_strategy"]:
-                    # For parameters with enumerable options, show a dropdown menu
-                    options = ["None"] + list(get_config(param)["enum"])
-                    new_value = st.selectbox(param, options=options, index=options.index(value), key=param)
                 elif param in ["numeric_features", "categorical_features", "date_features"]:
                     # For feature selection parameters, show a multiselect widget
                     options = [col for col in df.columns if col != target_column]
@@ -111,9 +107,6 @@ if 'df' in locals():
                         form_inputs[param] = float(value)
                     elif isinstance(setup_params[param], int):
                         form_inputs[param] = int(value)
-                    elif param in ["normalize_method", "transformation_method", "unknown_categorical_method", "pca_method", "fix_imbalance_method", "fold_strategy"]:
-                        # For parameters with enumerable options, convert the string to the option name
-                        form_inputs[param] = None if value == "None" else value
                     elif param in ["numeric_features", "categorical_features", "date_features"]:
                         # For feature selection parameters, convert the string to a list of column names
                         form_inputs[param] = value.split(",") if value else None
@@ -156,4 +149,3 @@ if 'df' in locals():
 
                 code = "\n".join(code_lines)
                 st.code(code, language="python")
-
