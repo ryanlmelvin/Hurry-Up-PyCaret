@@ -133,6 +133,7 @@ if 'df' in locals():
                     "from pycaret.classification import *",
                     "import pandas as pd"
                     "",
+                    "",
                     f"df = pd.read_csv('{uploaded_file.name}')",
                     "",
                     "clf_setup = setup(",
