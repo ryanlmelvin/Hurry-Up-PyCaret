@@ -131,6 +131,7 @@ if 'df' in locals():
                 st.write("### Python Code to Recreate the Model Comparison")
                 code_lines = [
                     "from pycaret.classification import *",
+                    "import pandas as pd"
                     "",
                     f"df = pd.read_csv('{uploaded_file.name}')",
                     "",
